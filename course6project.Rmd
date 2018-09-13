@@ -1,0 +1,110 @@
+---
+title: "Course 6 Projects"
+author: "Rohit Jain"
+date: "9/11/2018"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part1:Simulation Exercise
+
+In this part of the project we will investigate the exponential distribution in R and compare it with the Central Limit Theorem.
+
+#### 1. Show the sample mean and compare it to the theoretical mean of the distribution.
+
+We are capturing the 1000 values of mean of the "random exponentials distribution for 40 observations and lambda = 0.2". we have set the seed to 123478 in R to get a reproducible result every time we knit the Rmd file.
+
+Initializing simulation data:
+```{r simulationData}
+sampleSize <- 40
+lambda <- 0.2
+```
+
+Simulating:
+```{r simulation}
+set.seed(123478)
+simP1 <- vector()
+for (i in 1:1000) {
+  simP1 <- c(simP1, mean(rexp(sampleSize, 0.2))) 
+}
+```
+
+Below is the distribution of mean values captured from the simulation and the Blue line is showing the mean of the simulated data.
+```{r echo=FALSE}
+hist(simP1, breaks=40, main = "Figure 1: Distribution of Means of 1000 Simulation", xlab = "Simulated Mean")
+abline(v=mean(simP1), b = 90 , col = "blue")
+legend('topright', c("Sample Mean"), 
+       col=c("blue"), lty=c(1))
+```
+
+#### 2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+
+```{r comparisiondata}
+library(knitr)
+theoreticalValues <- c(1/lambda, (1/0.2)^2/sampleSize)
+sampleValues <- c(mean(simP1),var(simP1))
+comData <- rbind(theoreticalValues,sampleValues)
+colnames(comData) <- c("Mean","Variance")
+```
+
+Below is the table in which we have compared the theoretical and sample, mean and variance. 
+```{r comparisiontable, echo=FALSE}
+kable(comData, caption = "Table1 : Comparision for the mean and variance of sampled and theoretical values")
+
+```
+
+#### 3. Show that the distribution is approximately normal.
+
+The Blue and Red curves are for the sample and theoretical data repectively is fitted on the Simulated data distribution which is showing that the normal curve is perfectly fitted on the distribution.
+```{r distribution, echo= FALSE}
+x <- simP1
+h<-hist(x, breaks=40, main="Figure2: Distribution with Normal Curve for Theoretical and Sampled Values", xlab = "Mean of 1000 simulation") 
+xfit<-seq(min(x),max(x),length=40) 
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x)) 
+yfit <- yfit*diff(h$mids[1:2])*length(x) 
+
+yfit1 <-dnorm(xfit,mean=1/0.2,sd=sqrt((1/0.2)^2/40)) 
+yfit1 <- yfit1*diff(h$mids[1:2])*length(x) 
+lines(xfit, yfit, col="blue", lwd=2)
+lines(xfit, yfit1, col= "red", lwd = 2)
+legend('topright', c("Sampled", "Theoretical"),col=c("blue", "red"), lty=c(1,1))
+```
+
+#### Appendix 1: Code for Tables and Figures:
+
+```{r Figure1, eval=FALSE}
+# Code of Figure1
+
+hist(simP1, breaks=40, main = "Figure 1: Distribution of Means of 1000 Simulation", xlab = "Simulated Mean")
+abline(v=mean(simP1), b = 90 , col = "blue")
+legend('topright', c("Sample Mean"), 
+       col=c("blue"), lty=c(1))
+```
+
+```{r Table1, eval=FALSE}
+# Code of Table1
+
+kable(comData, caption = "Table1 : Comparision for the mean and variance of sampled and theoretical values")
+```
+
+```{r Figure2, eval=FALSE}
+#Code for Figure2
+
+x <- simP1
+h<-hist(x, breaks=40, main="Distribution with Normal Curve for Theoretical and Sampled Values", xlab = "Mean of 1000 simulation") 
+xfit<-seq(min(x),max(x),length=40) 
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x)) 
+yfit <- yfit*diff(h$mids[1:2])*length(x) 
+
+yfit1 <-dnorm(xfit,mean=1/0.2,sd=sqrt((1/0.2)^2/40)) 
+yfit1 <- yfit1*diff(h$mids[1:2])*length(x) 
+lines(xfit, yfit, col="blue", lwd=2)
+lines(xfit, yfit1, col= "red", lwd = 2)
+legend('topright', c("Sampled", "Theoretical"),col=c("blue", "red"), lty=c(1,1))
+```
