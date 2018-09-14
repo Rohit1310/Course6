@@ -1,0 +1,111 @@
+---
+title: "course6Part2"
+author: "Rohit Jain"
+date: "9/13/2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Part2: Basic Inferential Data Analysis Instructions: 
+
+Analysis of the ToothGrowth data in the R datasets package
+
+#### 1. Load the ToothGrowth data and perform some basic exploratory data analyses And 2. Provide a basic summary of the data.
+
+##### Summary Of Data:
+
+The data is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+It is a data frame with 60 observations on 3 variables.
+
+* [,1]	len	numeric	Tooth length 
+* [,2]	supp	factor	Supplement type (VC or OJ). 
+* [,3]	dose	numeric	Dose in milligrams/day
+
+```{r }
+summary(ToothGrowth)
+```
+
+##### Exploratory Data Analyses:
+
+i) Figure1 in the Appendix distribution depict the number of guinea pigs for specific range of tooth length and as per the distribution the maximum number guinea pigs are in the (15, 20) and (25,30) range of tooth length.
+
+ii) Figure2 in the Appendix  is the distribution for the toothlength on the basis of delivery methods that is orange juice or ascorbic acid (a form of vitamin C and coded as VC). We have plotted a mean tooth length with a black and the infrence from the distribution is "Number of guinea pigs having tooth length greater than the mean tooth lenghth is for the OJ delivery method."
+
+
+
+
+iii) Figure3 in the Appendix is distribution for the tooth length on the basis of dose levels of vitamin C (0.5, 1, and 2 mg/day). We have plotted a mean tooth length with a black line and the infrence from the distribution is "Number guinea pigs having tooth length greater than the mean tooth lenghth is in the order 2 > 1 > 0.5."
+
+
+#### 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
+
+```{r }
+t.test(len ~ supp, data = ToothGrowth[ToothGrowth$dose == 0.5,])
+```
+
+The above t-test for the lowest dose level that is "0.5" shows that the tooth growth is significantly large for OJ than the VC delivery method.
+
+```{r }
+t.test(len ~ supp, data = ToothGrowth[ToothGrowth$dose == 1,])
+```
+
+The above t-test for the dose level "1" shows that the tooth growth is significantly large for OJ then the VC delivery method.
+
+```{r }
+t.test(len ~ supp, data = ToothGrowth[ToothGrowth$dose == 2,])
+```
+
+The above t-test for the dose largest level that is "2" shows that their is no influence of the delivery method OJ or VC on tooth growth.
+
+#### 4. State your conclusions and the assumptions needed for your conclusions
+
+
+#### Conclusion:
+
+* Tooth growth is faster in OJ than VC delivery method for the 0.5 and 1 dose level.
+* Delivery method doesn't have any impact on the tooth growth for the 2 dose level.
+
+#### Assumptions:
+
+* The sample data is not paired.
+* The variances between the sample data are not equal.
+
+### Appendix:
+
+```{r echo=TRUE}
+hist(ToothGrowth$len,
+     main = "Figure1. Frequency distribution of Toothlegth",
+     xlab = "Tooth length",
+     ylab = "Frequency")
+```
+
+```{r echo=TRUE}
+library(ggplot2)
+g <- ggplot(data = ToothGrowth, aes(x=len))+
+  facet_grid(supp ~ .) +
+  geom_histogram(binwidth=2,colour="white",fill = "red")+
+  geom_vline(xintercept = mean(ToothGrowth$len)) + 
+  labs(title = "Figure2. Frequency distribution of Toothlegth on the basis of delivery method") + 
+  xlab("Tooth Length") + 
+  ylab("Frequency")
+print(g)
+```
+
+```{r , echo=TRUE}
+g1 <- ggplot(data = ToothGrowth, aes(x=len)) +
+  facet_grid(dose ~ .) + 
+  geom_histogram(binwidth=2,colour="white", fill = "blue")+
+  geom_vline(xintercept = mean(ToothGrowth$len))+
+  labs(title = "Figure3. Frequency distribution of Toothlegth on the basis of dose level") +
+  xlab("Tooth Length") + 
+  ylab("Frequency")
+print(g1)
+```
+
+
